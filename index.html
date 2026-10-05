@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="theme-color" content="#fff8ee">
+	<title>A Little Thank You</title>
+	<style>
+		@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700&display=swap');
+
+		:root {
+			color-scheme: light;
+			--ink: #25372e;
+			--green: #387b59;
+			--coral: #e77d67;
+			--paper: #fffaf2;
+		}
+
+		* { box-sizing: border-box; }
+
+		body {
+			min-height: 100vh;
+			margin: 0;
+			display: grid;
+			place-items: center;
+			overflow-x: hidden;
+			overflow-y: auto;
+			color: var(--ink);
+			font-family: 'DM Sans', sans-serif;
+			background-color: #fff8ee;
+			background-image: radial-gradient(#e8d9c5 0.8px, transparent 0.8px);
+			background-size: 20px 20px;
+		}
+
+		main {
+			width: min(100% - 32px, 560px);
+			min-height: 660px;
+			display: grid;
+			justify-items: center;
+			align-content: center;
+			gap: 30px;
+			text-align: center;
+		}
+
+		.intro h1, .greeting h2 {
+			margin: 0;
+			font-family: 'Playfair Display', Georgia, serif;
+			font-weight: 700;
+		}
+
+		.intro h1 { font-size: clamp(2rem, 7vw, 3.2rem); }
+
+		.intro p {
+			margin: 10px 0 0;
+			color: #68766d;
+			font-size: 1rem;
+		}
+
+		.gift-button {
+			position: relative;
+			width: 220px;
+			height: 220px;
+			padding: 0;
+			border: 0;
+			background: transparent;
+			cursor: pointer;
+			-webkit-tap-highlight-color: transparent;
+		}
+
+		.gift-button:focus-visible {
+			outline: 3px solid var(--green);
+			outline-offset: 10px;
+			border-radius: 10px;
+		}
+
+		.gift-box {
+			position: absolute;
+			inset: 48px 20px 12px;
+		}
+
+		.gift-box::before, .gift-box::after, .gift-lid::before {
+			position: absolute;
+			z-index: 1;
+			content: '';
+			background: #f7d675;
+			transition: opacity 350ms ease;
+		}
+
+		.gift-half {
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			width: calc(50% - 15px);
+			background: var(--coral);
+			box-shadow: 0 15px 25px #7c604333;
+			transition: transform 650ms cubic-bezier(.2,.8,.2,1);
+		}
+
+		.gift-half.left {
+			left: 0;
+			border-radius: 5px 0 0 12px;
+		}
+
+		.gift-half.right {
+			right: 0;
+			border-radius: 0 5px 12px 0;
+		}
+
+		.gift-box::before {
+			top: 0;
+			bottom: 0;
+			left: 50%;
+			width: 30px;
+			transform: translateX(-50%);
+		}
+
+		.gift-box::after {
+			top: 50%;
+			right: 0;
+			left: 0;
+			height: 21px;
+			transform: translateY(-50%);
+		}
+
+		.gift-lid {
+			position: absolute;
+			z-index: 2;
+			top: 35px;
+			left: 8px;
+			width: 204px;
+			height: 32px;
+			border-radius: 6px;
+			background: #d96f5a;
+			box-shadow: 0 5px 8px #7c604322;
+			transition: transform 700ms cubic-bezier(.2,.8,.2,1), opacity 450ms ease;
+		}
+
+		.gift-lid::before {
+			top: 0;
+			bottom: 0;
+			left: 50%;
+			width: 30px;
+			transform: translateX(-50%);
+		}
+
+		.bow {
+			position: absolute;
+			z-index: 3;
+			top: 7px;
+			left: 50%;
+			width: 25px;
+			height: 25px;
+			border: 8px solid #f7d675;
+			border-radius: 50% 50% 4px 50%;
+			transform: translateX(-50%) rotate(45deg);
+			transition: transform 650ms ease, opacity 300ms ease;
+		}
+
+		.gift-button:hover:not(:disabled) .gift-box { transform: translateY(-5px); }
+		.gift-button:hover:not(:disabled) .gift-lid { transform: translateY(-5px); }
+		.gift-button:disabled { cursor: default; }
+
+		.gift-button.open .gift-half.left {
+			transform: translate(-75px, 24px) rotate(-14deg);
+		}
+
+		.gift-button.open .gift-half.right {
+			transform: translate(75px, 24px) rotate(14deg);
+		}
+
+		.gift-button.open .gift-box::before, .gift-button.open .gift-box::after {
+			opacity: 0;
+		}
+
+		.gift-button.open .gift-lid {
+			opacity: 0;
+			transform: translate(-125px, -65px) rotate(-24deg);
+		}
+
+		.gift-button.open .bow {
+			opacity: 0;
+			transform: translate(-50px, -65px) rotate(100deg);
+		}
+
+		.greeting {
+			width: min(100%, 390px);
+			padding: 18px;
+			border: 1px solid #e9ddca;
+			border-radius: 8px;
+			background: var(--paper);
+			box-shadow: 0 18px 45px #5f4a3020;
+			opacity: 0;
+			transform: translateY(22px) scale(.96);
+			pointer-events: none;
+			transition: opacity 500ms ease, transform 600ms cubic-bezier(.2,.8,.2,1);
+		}
+
+		.greeting.visible {
+			opacity: 1;
+			transform: translateY(0) scale(1);
+		}
+
+		.greeting img {
+			display: block;
+			width: 100%;
+			height: 190px;
+			object-fit: cover;
+			border-radius: 4px;
+		}
+
+		.greeting h2 {
+			margin-top: 16px;
+			color: var(--green);
+			font-size: clamp(1.7rem, 6vw, 2.15rem);
+		}
+
+		.greeting p {
+			margin: 8px 0 2px;
+			color: #68766d;
+			font-size: .95rem;
+		}
+
+		.sparkle {
+			position: fixed;
+			z-index: -1;
+			color: #e6b84f;
+			font-size: 1.5rem;
+			opacity: 0;
+			pointer-events: none;
+		}
+
+		.sparkle:nth-of-type(1) { top: 20%; left: 18%; }
+		.sparkle:nth-of-type(2) { top: 24%; right: 19%; font-size: 1rem; }
+		.sparkle:nth-of-type(3) { bottom: 19%; left: 22%; font-size: 1rem; }
+		.sparkle:nth-of-type(4) { right: 20%; bottom: 20%; }
+
+		.celebrating .sparkle { animation: twinkle 1.2s ease-out both; }
+		.celebrating .sparkle:nth-of-type(2) { animation-delay: 120ms; }
+		.celebrating .sparkle:nth-of-type(3) { animation-delay: 220ms; }
+		.celebrating .sparkle:nth-of-type(4) { animation-delay: 80ms; }
+
+		@keyframes twinkle {
+			20% { opacity: 1; transform: scale(1.3) rotate(20deg); }
+			100% { opacity: 0; transform: scale(.5) rotate(70deg); }
+		}
+
+		@media (max-height: 720px) {
+			main { min-height: 100vh; gap: 8px; }
+			.gift-button { width: 190px; height: 190px; transform: scale(.86); }
+			.greeting img { height: 110px; }
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			*, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+		}
+	</style>
+</head>
+<body>
+	<main>
+		<header class="intro">
+			<h1>A little thank you</h1>
+			<p>There’s something special inside.</p>
+		</header>
+
+		<button class="gift-button" id="gift" type="button" aria-label="Open the gift">
+			<span class="gift-box" aria-hidden="true">
+				<span class="gift-half left"></span>
+				<span class="gift-half right"></span>
+			</span>
+			<span class="gift-lid" aria-hidden="true"></span>
+			<span class="bow" aria-hidden="true"></span>
+		</button>
+
+		<section class="greeting" id="greeting" aria-live="polite" aria-hidden="true">
+			<img src="https://images.unsplash.com/photo-1490750967868-88aa4486c946?auto=format&fit=crop&w=900&q=85" alt="A colorful bouquet of flowers">
+			<h2>Happy Teacher’s Day!</h2>
+			<p>Thank you for helping us grow.</p>
+		</section>
+	</main>
+
+	<span class="sparkle" aria-hidden="true">✦</span>
+	<span class="sparkle" aria-hidden="true">✧</span>
+	<span class="sparkle" aria-hidden="true">✧</span>
+	<span class="sparkle" aria-hidden="true">✦</span>
+	<script src="index.js"></script>
+</body>
+</html>
